@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
     private Animator animator;
 
     private bool isMidAir = false;
+    private bool isDead = false;
+    private Vector2 moveDirection;
 
     private void Awake()
     {
@@ -37,24 +39,56 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
     {
         if (!context.performed) return;
 
-        rb.gravityScale *= -1;
-        sprite.flipY = !sprite.flipY;
-        isMidAir = !isMidAir;
-        animator.SetBool("isMidAir", isMidAir);
+        //rb.gravityScale *= -1;
+        //sprite.flipY = !sprite.flipY;
+        //isMidAir = !isMidAir;
+        //animator.SetBool("isMidAir", isMidAir);
+        DieSequence();
     }
 
     public void OnMovement(InputAction.CallbackContext context)
     {
-        Vector2 move = context.ReadValue<Vector2>();
-
-        transform.Translate(move * speed * Time.deltaTime);
+        moveDirection = context.ReadValue<Vector2>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-		Vector2 move = Input.Patrick.Movement.ReadValue<Vector2>();
+        if(isDead) return;
 
-		transform.Translate(move * speed * Time.deltaTime);
-	}
+        switch (moveDirection.x)
+        {
+            case > 0:
+                sprite.flipX = true;
+                animator.SetBool("isRunning", true);
+                break;
+            case < 0:
+                sprite.flipX = false;
+                animator.SetBool("isRunning", true);
+                break;
+            case 0:
+                animator.SetBool("isRunning", false);
+                break;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (isDead) return;
+
+        rb.linearVelocityX = moveDirection.x * speed;
+    }
+
+    private void DieSequence()
+    {
+        isDead = true;
+		animator.SetBool("isHit", true);
+		if (sprite.flipX == true)
+        {
+            rb.AddForce(new Vector2(-5f, 10f), ForceMode2D.Impulse);
+        }
+        else
+        {
+			rb.AddForce(new Vector2(5f, 10f), ForceMode2D.Impulse);
+		}
+    }
 }
