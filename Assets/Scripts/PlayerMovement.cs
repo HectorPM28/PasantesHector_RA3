@@ -5,14 +5,17 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
 {
     [SerializeField] private float speed = 5f;
+	public float rayLength = 1f;
+	public LayerMask groundLayer;
 
-    private InputSystem_Actions Input;
+	private InputSystem_Actions Input;
     private Rigidbody2D rb;
     private SpriteRenderer sprite;
     private Animator animator;
+    private Collider2D collider;
 
-    private bool isMidAir = false;
     private bool isDead = false;
+    private bool isGrounded;
     private Vector2 moveDirection;
 
     private void Awake()
@@ -23,10 +26,12 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
     private void OnEnable()
     {
         Input.Enable();
+        GameEvents.OnPlayerDeath += DieSequence;
     }
     private void OnDisable()
     {
         Input.Disable();
+        GameEvents.OnPlayerDeath -= DieSequence;
     }
 
     void Start()
@@ -34,16 +39,16 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
         rb = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        collider = GetComponent<Collider2D>();
     }
     public void OnChangeGravity(InputAction.CallbackContext context)
     {
-        if (!context.performed) return;
+        if (!context.performed || !isGrounded) return;
 
-        //rb.gravityScale *= -1;
-        //sprite.flipY = !sprite.flipY;
-        //isMidAir = !isMidAir;
-        //animator.SetBool("isMidAir", isMidAir);
-        DieSequence();
+        rb.gravityScale *= -1;
+        rayLength *= -1;
+        sprite.flipY = !sprite.flipY;
+        collider.offset *= -1;
     }
 
     public void OnMovement(InputAction.CallbackContext context)
@@ -55,7 +60,11 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
     {
         if(isDead) return;
 
-        switch (moveDirection.x)
+		isGrounded = IsGrounded();
+
+		animator.SetBool("isMidAir", !isGrounded);
+
+		switch (moveDirection.x)
         {
             case > 0:
                 sprite.flipX = true;
@@ -70,6 +79,13 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
                 break;
         }
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Trap"))
+        {
+            GameEvents.PlayerDeath();
+        }
+    }
 
     void FixedUpdate()
     {
@@ -82,13 +98,16 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
     {
         isDead = true;
 		animator.SetBool("isHit", true);
-		if (sprite.flipX == true)
-        {
-            rb.AddForce(new Vector2(-5f, 10f), ForceMode2D.Impulse);
-        }
-        else
-        {
-			rb.AddForce(new Vector2(5f, 10f), ForceMode2D.Impulse);
-		}
-    }
+
+        int xDirection = sprite.flipX ? 1 : -1;
+        int yDirection = rb.gravityScale > 0 ? 1 : -1;
+
+        rb.AddForce(new Vector2(-5f * xDirection, 10f * yDirection), ForceMode2D.Impulse);
+	}
+	bool IsGrounded()
+	{
+		RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up * -1, rayLength, groundLayer);
+
+		return hit.collider != null;
+	}
 }
