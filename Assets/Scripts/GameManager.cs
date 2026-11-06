@@ -1,16 +1,45 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+	public static GameManager Instance;
+
+    public List<Vector3> cameraPositions = new List<Vector3>();
+	public List<Vector3> playerPositions = new List<Vector3>();
+
+    public bool CanTeleport = true;
+
+
+    public int currentLevel = 0;
+
+    private void Awake()
     {
-        
+		if (Instance == null)
+		{
+			Instance = this;
+		}
+		else
+		{
+			Destroy(gameObject);
+		}
+    }
+    private void OnEnable()
+	{
+		GameEvents.OnLevelWin += ChangeLevel;
+	}
+	private void OnDisable()
+	{
+		GameEvents.OnLevelWin -= ChangeLevel;
+	}
+
+	void Start()
+    {
+        Camera.main.transform.position = cameraPositions[currentLevel];
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	private void ChangeLevel(int level)
+	{
+		Camera.main.transform.position = cameraPositions[level];
+	}
 }

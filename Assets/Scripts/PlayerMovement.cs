@@ -27,11 +27,13 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
     {
         Input.Enable();
         GameEvents.OnPlayerDeath += DieSequence;
-    }
-    private void OnDisable()
+		GameEvents.OnPlayerTeleport += TeleportPlayer;
+	}
+	private void OnDisable()
     {
         Input.Disable();
         GameEvents.OnPlayerDeath -= DieSequence;
+        GameEvents.OnPlayerTeleport -= TeleportPlayer;
     }
 
     void Start()
@@ -40,7 +42,9 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         collider = GetComponent<Collider2D>();
-    }
+
+		transform.position = GameManager.Instance.playerPositions[GameManager.Instance.currentLevel];
+	}
     public void OnChangeGravity(InputAction.CallbackContext context)
     {
         if (!context.performed || !isGrounded) return;
@@ -106,8 +110,13 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
 	}
 	bool IsGrounded()
 	{
-		RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up * -1, rayLength, groundLayer);
+		RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, rayLength, groundLayer);
 
 		return hit.collider != null;
 	}
+
+    private void TeleportPlayer(int level)
+    {
+        transform.position = GameManager.Instance.playerPositions[level];
+    }
 }
