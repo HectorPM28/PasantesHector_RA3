@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class SeashellScript : MonoBehaviour
 {
-    public GameObject pearlPrefab;
+    [SerializeField] private Transform spawnPoint;
 
     public void CreatePearl()
     {
-        Instantiate(pearlPrefab);
+        PearlPool.Instance.GetObject(spawnPoint.position);
     }
+
 }
