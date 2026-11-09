@@ -7,6 +7,7 @@ public class PearlPool : MonoBehaviour
 
     [SerializeField] private GameObject pearlPrefab;
     [SerializeField] private int initialSize = 20;
+    [SerializeField] private float bulletSpeed = 5f;
 
     private Stack<GameObject> freeObjects = new Stack<GameObject>();
     
@@ -33,7 +34,7 @@ public class PearlPool : MonoBehaviour
         return newPearl;
     }
 
-    public GameObject GetObject(Vector3 position)
+    public GameObject GetObject(Vector3 position, Vector2 direction)
     {
         GameObject objectToUse;
 
@@ -48,6 +49,10 @@ public class PearlPool : MonoBehaviour
 
         objectToUse.transform.position = position;
         objectToUse.SetActive(true);
+
+        Rigidbody2D rb = objectToUse.GetComponent<Rigidbody2D>();
+        rb.linearVelocity = direction * bulletSpeed;
+
         return objectToUse;
     }
     public void ReturnObject(GameObject objectToReturn)
