@@ -85,7 +85,7 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Trap"))
+        if (collision.collider.CompareTag("Trap") || collision.collider.CompareTag("Enemy"))
         {
             GameEvents.PlayerDeath();
         }

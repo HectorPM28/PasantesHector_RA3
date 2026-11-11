@@ -1201,6 +1201,35 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""NPC"",
+            ""id"": ""9bca2e0d-f38d-499e-b12f-e414050619f6"",
+            ""actions"": [
+                {
+                    ""name"": ""PassDialog"",
+                    ""type"": ""Button"",
+                    ""id"": ""abe30946-90ec-4d6c-9825-b7f6b0d39285"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""3c762a5c-2add-478e-a9a1-e8d6c008e2e8"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PassDialog"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1293,6 +1322,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Patrick = asset.FindActionMap("Patrick", throwIfNotFound: true);
         m_Patrick_ChangeGravity = m_Patrick.FindAction("ChangeGravity", throwIfNotFound: true);
         m_Patrick_Movement = m_Patrick.FindAction("Movement", throwIfNotFound: true);
+        // NPC
+        m_NPC = asset.FindActionMap("NPC", throwIfNotFound: true);
+        m_NPC_PassDialog = m_NPC.FindAction("PassDialog", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1300,6 +1332,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Patrick.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Patrick.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_NPC.enabled, "This will cause a leak and performance issues, InputSystem_Actions.NPC.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1857,6 +1890,102 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="PatrickActions" /> instance referencing this action map.
     /// </summary>
     public PatrickActions @Patrick => new PatrickActions(this);
+
+    // NPC
+    private readonly InputActionMap m_NPC;
+    private List<INPCActions> m_NPCActionsCallbackInterfaces = new List<INPCActions>();
+    private readonly InputAction m_NPC_PassDialog;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "NPC".
+    /// </summary>
+    public struct NPCActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public NPCActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "NPC/PassDialog".
+        /// </summary>
+        public InputAction @PassDialog => m_Wrapper.m_NPC_PassDialog;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_NPC; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="NPCActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(NPCActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="NPCActions" />
+        public void AddCallbacks(INPCActions instance)
+        {
+            if (instance == null || m_Wrapper.m_NPCActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_NPCActionsCallbackInterfaces.Add(instance);
+            @PassDialog.started += instance.OnPassDialog;
+            @PassDialog.performed += instance.OnPassDialog;
+            @PassDialog.canceled += instance.OnPassDialog;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="NPCActions" />
+        private void UnregisterCallbacks(INPCActions instance)
+        {
+            @PassDialog.started -= instance.OnPassDialog;
+            @PassDialog.performed -= instance.OnPassDialog;
+            @PassDialog.canceled -= instance.OnPassDialog;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="NPCActions.UnregisterCallbacks(INPCActions)" />.
+        /// </summary>
+        /// <seealso cref="NPCActions.UnregisterCallbacks(INPCActions)" />
+        public void RemoveCallbacks(INPCActions instance)
+        {
+            if (m_Wrapper.m_NPCActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="NPCActions.AddCallbacks(INPCActions)" />
+        /// <seealso cref="NPCActions.RemoveCallbacks(INPCActions)" />
+        /// <seealso cref="NPCActions.UnregisterCallbacks(INPCActions)" />
+        public void SetCallbacks(INPCActions instance)
+        {
+            foreach (var item in m_Wrapper.m_NPCActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_NPCActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="NPCActions" /> instance referencing this action map.
+    /// </summary>
+    public NPCActions @NPC => new NPCActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -2092,5 +2221,20 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMovement(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "NPC" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="NPCActions.AddCallbacks(INPCActions)" />
+    /// <seealso cref="NPCActions.RemoveCallbacks(INPCActions)" />
+    public interface INPCActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "PassDialog" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPassDialog(InputAction.CallbackContext context);
     }
 }

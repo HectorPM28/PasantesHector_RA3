@@ -34,11 +34,11 @@ public class PearlPool : MonoBehaviour
         return newPearl;
     }
 
-    public GameObject GetObject(Vector3 position, Vector2 direction)
+    public GameObject GetObject(Vector3 position, Vector2 direction, float speed)
     {
         GameObject objectToUse;
 
-        if(freeObjects.Count > 0)
+        if (freeObjects.Count > 0)
         {
             objectToUse = freeObjects.Pop();
         }
@@ -51,7 +51,7 @@ public class PearlPool : MonoBehaviour
         objectToUse.SetActive(true);
 
         Rigidbody2D rb = objectToUse.GetComponent<Rigidbody2D>();
-        rb.linearVelocity = direction * bulletSpeed;
+        rb.linearVelocity = direction * speed;
 
         return objectToUse;
     }

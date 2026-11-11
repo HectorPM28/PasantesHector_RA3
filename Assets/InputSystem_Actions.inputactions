@@ -1115,6 +1115,35 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "NPC",
+            "id": "9bca2e0d-f38d-499e-b12f-e414050619f6",
+            "actions": [
+                {
+                    "name": "PassDialog",
+                    "type": "Button",
+                    "id": "abe30946-90ec-4d6c-9825-b7f6b0d39285",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3c762a5c-2add-478e-a9a1-e8d6c008e2e8",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PassDialog",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
