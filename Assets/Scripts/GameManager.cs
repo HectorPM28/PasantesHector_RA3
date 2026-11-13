@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
 		{
 			Destroy(gameObject);
 		}
+		DontDestroyOnLoad(this);
 		Camera.main.orthographicSize = initialCameraSize;
     }
     private void OnEnable()
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
 	}
 	public void ChangeCamera(Vector3 position, float size)
 	{
-        Camera.main.transform.position = position;
-        Camera.main.orthographicSize = size;
-    }
+		Camera.main.transform.position = position;
+		Camera.main.orthographicSize = size;
+	}
 }
