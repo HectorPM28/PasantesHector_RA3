@@ -7,13 +7,12 @@ public class GameManager : MonoBehaviour
 {
 	public static GameManager Instance;
 
-    public List<Vector3> cameraPositions = new List<Vector3>();
 	public List<Vector3> playerPositions = new List<Vector3>();
+	public List<Vector3> playerStartingPositions = new List<Vector3>();
 
     public bool CanTeleport = true;
     public int currentLevel = 0;
 
-	private float initialCameraSize = 5f;
 
     private void Awake()
     {
@@ -26,26 +25,18 @@ public class GameManager : MonoBehaviour
 			Destroy(gameObject);
 		}
 		DontDestroyOnLoad(this);
-		Camera.main.orthographicSize = initialCameraSize;
     }
     private void OnEnable()
-	{
-		GameEvents.OnLevelWin += ChangeLevel;
-	}
-	private void OnDisable()
-	{
-		GameEvents.OnLevelWin -= ChangeLevel;
-	}
-
-	void Start()
     {
-        Camera.main.transform.position = cameraPositions[currentLevel];
+        GameEvents.OnLevelWin += ChangeLevel;
     }
-
-	private void ChangeLevel(int level)
+    private void OnDisable()
+    {
+        GameEvents.OnLevelWin -= ChangeLevel;
+    }
+    private void ChangeLevel(int level)
 	{
-		Camera.main.orthographicSize = initialCameraSize;
-		Camera.main.transform.position = cameraPositions[level];
+		currentLevel = level;
 	}
 	public void ChangeCamera(Vector3 position, float size)
 	{

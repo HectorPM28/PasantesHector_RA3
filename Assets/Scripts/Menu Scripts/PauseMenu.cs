@@ -29,13 +29,13 @@ public class PauseMenu : MonoBehaviour, InputSystem_Actions.IPauseOptionsActions
     }
     public void Restart()
     {
+        GameManager.Instance.currentLevel = 0;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         pausePanel.SetActive(false);
-        Camera.main.transform.position = GameManager.Instance.cameraPositions[0];
-
     }
     public void Exit()
     {
+        GameManager.Instance.currentLevel = 0;
         SceneManager.LoadScene(0);
         pausePanel.SetActive(false);
     }

@@ -7,7 +7,7 @@ public class CameraChanger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") && GameManager.Instance.CanTeleport)
+        if (collision.CompareTag("Player"))
         {
             GameManager.Instance.ChangeCamera(newCameraPosition, newCameraSize);
         }

@@ -12,8 +12,7 @@ public static class GameEvents
 	{
 		OnPlayerDeath?.Invoke();
 	}
-
-	public static void LevelWin(int level)
+    public static void LevelWin(int level)
 	{
 		OnLevelWin?.Invoke(level);
 	}

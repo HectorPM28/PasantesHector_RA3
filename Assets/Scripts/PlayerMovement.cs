@@ -1,6 +1,8 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
 {
@@ -28,8 +30,8 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
         Input.Enable();
         GameEvents.OnPlayerDeath += DieSequence;
 		GameEvents.OnPlayerTeleport += TeleportPlayer;
-	}
-	private void OnDisable()
+    }
+    private void OnDisable()
     {
         Input.Disable();
         GameEvents.OnPlayerDeath -= DieSequence;
@@ -43,8 +45,9 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
         animator = GetComponent<Animator>();
         collider = GetComponent<Collider2D>();
 
-		transform.position = GameManager.Instance.playerPositions[GameManager.Instance.currentLevel];
-	}
+        transform.position = GameManager.Instance.playerStartingPositions[GameManager.Instance.currentLevel];
+
+    }
     public void OnChangeGravity(InputAction.CallbackContext context)
     {
         if (!context.performed || !isGrounded) return;
@@ -107,6 +110,8 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
         int yDirection = rb.gravityScale > 0 ? 1 : -1;
 
         rb.AddForce(new Vector2(-5f * xDirection, 10f * yDirection), ForceMode2D.Impulse);
+
+        StartCoroutine(ChangeDeathScreen());
 	}
 	bool IsGrounded()
 	{
@@ -118,5 +123,11 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
     private void TeleportPlayer(int level)
     {
         transform.position = GameManager.Instance.playerPositions[level];
+    }
+    private IEnumerator ChangeDeathScreen()
+    {
+        yield return new WaitForSeconds(1);
+
+        SceneManager.LoadScene(2);
     }
 }

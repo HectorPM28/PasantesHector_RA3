@@ -7,7 +7,6 @@ public class PearlPool : MonoBehaviour
 
     [SerializeField] private GameObject pearlPrefab;
     [SerializeField] private int initialSize = 20;
-    [SerializeField] private float bulletSpeed = 5f;
 
     private Stack<GameObject> freeObjects = new Stack<GameObject>();
     

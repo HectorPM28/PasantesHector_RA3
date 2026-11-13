@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WinnerObject : MonoBehaviour
+public class LevelChanger : MonoBehaviour
 {
     [SerializeField] private int LevelId;
     [SerializeField] private int PlayerTeleportId;
