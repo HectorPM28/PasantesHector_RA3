@@ -56,6 +56,8 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
         rayLength *= -1;
         sprite.flipY = !sprite.flipY;
         collider.offset *= -1;
+
+        AudioManager.Instance.PlaySFX(0);
     }
 
     public void OnMovement(InputAction.CallbackContext context)
@@ -103,6 +105,8 @@ public class PlayerMovement : MonoBehaviour, InputSystem_Actions.IPatrickActions
 
     private void DieSequence()
     {
+        AudioManager.Instance.PlaySFX(1);
+
         isDead = true;
 		animator.SetBool("isHit", true);
 

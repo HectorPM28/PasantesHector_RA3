@@ -14,4 +14,19 @@ public class PearlScript : MonoBehaviour
             PearlPool.Instance.ReturnObject(gameObject);
         }
     }
+    private void Update()
+    {
+        if (OutOfCamera())
+        {
+            PearlPool.Instance.ReturnObject(gameObject);
+        }
+    }
+
+    private bool OutOfCamera()
+    {
+        Vector3 screenPosition = Camera.main.WorldToViewportPoint(transform.position);
+
+        return screenPosition.x < 0f || screenPosition.x > 1f ||
+               screenPosition.y < 0f || screenPosition.y > 1f;
+    }
 }

@@ -25,16 +25,19 @@ public class PauseMenu : MonoBehaviour, InputSystem_Actions.IPauseOptionsActions
 
     public void Continue()
     {
+        Time.timeScale = 1f;
         pausePanel.SetActive(false);
     }
     public void Restart()
     {
+        Time.timeScale = 1f;
         GameManager.Instance.currentLevel = 0;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         pausePanel.SetActive(false);
     }
     public void Exit()
     {
+        Time.timeScale = 1f;
         GameManager.Instance.currentLevel = 0;
         SceneManager.LoadScene(0);
         pausePanel.SetActive(false);
@@ -46,7 +49,8 @@ public class PauseMenu : MonoBehaviour, InputSystem_Actions.IPauseOptionsActions
         {
             if (!bannedScenes.Contains(SceneManager.GetActiveScene().buildIndex))
             {
-                pausePanel.SetActive(!pausePanel.activeSelf);
+                Time.timeScale = 0;
+                pausePanel.SetActive(true);//!pausePanel.activeSelf);
             }
         }
     }
