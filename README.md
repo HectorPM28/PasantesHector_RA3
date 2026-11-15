@@ -6,6 +6,7 @@ Controls:
 
 · Spacebar: Change gravity.
 
+· Esc key: Pause game.
  
 The game is a platformer based on the designs from the SpongeBob SquarePants series.
 
